@@ -24,8 +24,7 @@ CREATE TABLE `Account` (
     Username CHAR(10) UNIQUE KEY NOT NULL CHECK (LENGTH(Username) >= 6),
     Fullname VARCHAR(50) NOT NULL,
     DepartmentID SMALLINT UNSIGNED,
-    FOREIGN KEY (DepartmentID)
-        REFERENCES Department (DepartmentID),
+    
     PositionID SMALLINT UNSIGNED,
     FOREIGN KEY (PositionID)
         REFERENCES `Position` (PositionID),
@@ -100,9 +99,9 @@ CREATE TABLE  						Exam(
 DROP TABLE IF EXISTS 				ExamQuestion;
 CREATE TABLE  						ExamQuestion(
 	ExamID							SMALLINT UNSIGNED,
-		-- FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
-    QuestionID						SMALLINT UNSIGNED
-		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
+		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
+    QuestionID						SMALLINT UNSIGNED,
+		FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
 );
 -- ALTER TABLE examquestion
 -- DROP FOREIGN KEY `examquestion_ibfk_1`;
@@ -126,7 +125,7 @@ VALUES
             (		N'Bảo vệ '				),
             (		N'Phòng ăn'				),
             (		N'Vệ sinh'				);
--- SELECT * FROM  Department;
+SELECT * FROM  Department;
 -- ======================================ADD DATA FOR Posiition======================================================================================
 
 DELETE FROM `Position`;
@@ -279,28 +278,31 @@ WHERE character_length(Fullname)= (SELECT max(character_length(Fullname)) FROM `
 -- SELECT * FROM QQQ
 -- limit 1 ;
 
-
-
-
 --  Question 5: Lấy ra thông tin account có full name dài nhất và thuộc phòng ban có id = 3
 With 				Fullname_max_and_DepartmenID_là_3 										-- giả lập một bảng đã có sẵn một thuộc tính với câu lệnh
 AS					(SELECT * FROM `Account` WHERE DepartmentID = '3')       				-- WITH....ABC....AS.....Điều kiện 1 
 SELECT * FROM 		Fullname_max_and_DepartmenID_là_3			  							-- và xem ABC như là một bảng đã có sẵn , mình chỉ cần thêm điều kiện còn lại 
-WHERE				length(Fullname)= (SELECT max(length(Fullname)) FROM Fullname_max_and_DepartmenID_là_3 ) ;
+WHERE				character_length(Fullname)= (SELECT max(character_length(Fullname)) FROM Fullname_max_and_DepartmenID_là_3 ) ;
 
 -- Question 6: Lấy ra tên group đã tham gia trước ngày 20/12/2019
 SELECT * FROM  `group`
 WHERE CreateDate < '2019-12-20';
 
 -- Question 7: Lấy ra ID của question có >= 4 câu trả lời
-SELECT * FROM Answer 
-WHERE Content LIKE 'đáp án Java%';
+select * from answer;
+SELECT 			answer.QuestionID,
+				count(answer.QuestionID) AS số_câu_trả_lời_cho_câu_hỏi   
+FROM Answer 
+group by QuestionID
+having count(answer.QuestionID) >= 4 ;
+
 
 -- Question 8: Lấy ra các mã đề thi có thời gian thi >= 60 phút và được tạo trước ngày 20/12/2019
+-- select * from exam ;
 WITH  				QS8 
 AS 					( SELECT * FROM Exam WHERE Duration >= '01:00:00' )
 SELECT * FROM 		QS8  
-WHERE				CreateDate < '2019-12-20 ';
+WHERE				CreateDate < '2019-12-20';
 
 -- Question 9: Lấy ra 5 group được tạo gần đây nhất
 SELECT * FROM 		`Group`
