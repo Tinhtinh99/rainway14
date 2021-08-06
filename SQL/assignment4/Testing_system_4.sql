@@ -23,6 +23,8 @@ CREATE TABLE `Account` (
     Email VARCHAR(50) UNIQUE KEY NOT NULL,
     Username CHAR(10) UNIQUE KEY NOT NULL CHECK (LENGTH(Username) >= 6),
     Fullname VARCHAR(50) NOT NULL,
+    
+    
     DepartmentID SMALLINT UNSIGNED,
 		-- FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID),
     PositionID SMALLINT UNSIGNED,
@@ -111,7 +113,7 @@ CREATE TABLE  						ExamQuestion(
 -- ===================================================================================================================================================================================================
 -- ==================================ADD DATA FOR DEPARTMENT ====================================================================================
 SET SQL_SAFE_UPDATES = 0;
-DELETE FROM  Department;
+TRUNCATE  Department;
 INSERT INTO  Department( DepartmentName) 
 VALUES 	
 			( 		N'Trưởng TT'			),

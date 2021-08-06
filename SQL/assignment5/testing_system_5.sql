@@ -18,15 +18,17 @@ CREATE TABLE  						`Position`(
 );
 -- ---------------------------------------TẠO BẢNG ACCOUNT---------------------------------------
 DROP TABLE IF EXISTS 				`Account`;
-CREATE TABLE 						`Account` (
-    AccountID 						MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-    Email 							VARCHAR(50) UNIQUE KEY NOT NULL,
-    Username 						CHAR(10) UNIQUE KEY NOT NULL CHECK (LENGTH(Username) >= 6),
-    Fullname 						VARCHAR(50) NOT NULL,
-    DepartmentID 					SMALLINT UNSIGNED,
-    PositionID 						SMALLINT UNSIGNED,
-		FOREIGN KEY (PositionID) REFERENCES `Position` (PositionID) ON DELETE CASCADE,
-    CreateDate 						DATE NOT NULL
+CREATE TABLE `Account` (
+    AccountID MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    Email VARCHAR(50) UNIQUE KEY NOT NULL,
+    Username CHAR(10) UNIQUE KEY NOT NULL CHECK (LENGTH(Username) >= 6),
+    Fullname VARCHAR(50) NOT NULL,
+    DepartmentID SMALLINT UNSIGNED,
+    
+    PositionID SMALLINT UNSIGNED,
+    FOREIGN KEY (PositionID)
+        REFERENCES `Position` (PositionID),
+    CreateDate DATE NOT NULL
 );
 -- ---------------------------------------TẠO BẢNG GROUP--------------------------------------------
 DROP TABLE IF EXISTS 				`Group`;
@@ -34,18 +36,16 @@ CREATE TABLE  						`Group`(
 	GroupID							MEDIUMINT UNSIGNED PRIMARY KEY,
     GroupName						VARCHAR(50) UNIQUE KEY NOT NULL ,
     CreatorID						MEDIUMINT UNSIGNED ,
-		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
-    CreateDate						DATE NOT NULL
+		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
+    CreateDate						DATETIME NOT NULL
 );
--- UPDATE LẠI CREATEDATE  
-
 -- -----------------------------------------TẠO BẢNG GROUPACCOUNT-------------------------------------
 DROP TABLE IF EXISTS 				GroupAccount;
 CREATE TABLE  						GroupAccount(
 	GroupID							MEDIUMINT UNSIGNED,
-		FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE,
-    AccountID						MEDIUMINT UNSIGNED, 
-		FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID),
+    AccountID						MEDIUMINT UNSIGNED,
+		FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID),
     JoinDate						DATETIME
 );
 -- -----------------------------------------TẠO BẢNG TYPEQUESTION-------------------------------------
@@ -66,11 +66,11 @@ CREATE TABLE  						Question(
 	QuestionID						SMALLINT UNSIGNED PRIMARY KEY ,
     Content							VARCHAR(100) UNIQUE KEY NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
-		FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
+		FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID),
     TypeID							SMALLINT UNSIGNED,
-		FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE,
+		FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID),
     CreatorID						MEDIUMINT UNSIGNED,
-		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
     CreateDate						DATETIME 
 );
 -- --------------------------------------------------TẠO BẢNG ANSWER------------------------------------
@@ -79,29 +79,29 @@ CREATE TABLE  						Answer(
 	AnswerID						SMALLINT UNSIGNED UNIQUE KEY NOT NULL,
     Content							VARCHAR(500) UNIQUE KEY NOT NULL ,
     QuestionID						SMALLINT UNSIGNED,
-		FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE,
+		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID),
     isCorrect						ENUM('Right','Wrong') NOT NULL
 );
 -- --------------------------------------------------TẠO BẢNG EXAM------------------------------------
 DROP TABLE IF EXISTS 				Exam;
 CREATE TABLE  						Exam(
 	ExamID							SMALLINT UNSIGNED PRIMARY KEY ,
-    `Code`							VARCHAR(15) UNIQUE KEY NOT NULL ,
+    Codee							VARCHAR(15) UNIQUE KEY NOT NULL ,
     Title							VARCHAR(20) NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
-		FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
+		FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID),
     Duration						TIME NOT NULL,
     CreatorID						MEDIUMINT UNSIGNED,
-		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
     CreateDate						DATE
 );
 -- -----------------------------------------------------TẠO BẢNG EXAMQUESTION-------------------------
 DROP TABLE IF EXISTS 				ExamQuestion;
 CREATE TABLE  						ExamQuestion(
 	ExamID							SMALLINT UNSIGNED,
-		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE,
+		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
     QuestionID						SMALLINT UNSIGNED,
-		FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE 
+		FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
 );
 -- ALTER TABLE examquestion
 -- DROP FOREIGN KEY `examquestion_ibfk_1`;
@@ -219,8 +219,6 @@ VALUES
             (8,'Câu hỏi về văn','8','2','4','2021-07-31'),
             (9,'Câu hỏi về sử','9','1','3','2021-07-31'),
             (10,'Câu hỏi về địa','10','2','4','2021-07-31');
-INSERT INTO `exammanagement2`.`Question` (`QuestionID`, `Content`, `CategoryID`, `TypeID`, `CreatorID`, `CreateDate`) VALUES ('11', 'địa lý 1', '10', '2', '4', '2021-07-31');
-
 -- SELECT * FROM Question;
 -- ===========================================ADD DATA FOR TABLE ANSWER===========================
 DELETE FROM Answer;
@@ -240,7 +238,7 @@ VALUES
 -- SELECT * FROM Answer;
 -- ===============================================ADD DATA FOR TABLE Exam=============================
 DELETE FROM Exam;
-INSERT INTO Exam(ExamID, `Code`, Title, CategoryID, Duration, CreatorID, CreateDate)
+INSERT INTO Exam(ExamID, Codee, Title, CategoryID, Duration, CreatorID, CreateDate)
 VALUES 
 			(1, '000001',' Đề thi học phần 1','1','01:30:00', '3','2021-07-20'),
             (2, '000002',' Đề thi học phần 2','2', '00:45:00' , '4','2018-07-20'),
@@ -260,94 +258,4 @@ VALUES
             (5,5),
             (6,6);
 -- SELECT * FROM ExamQuestion;
--- ===================================================================================================================================================================================================
--- ====================================================================================QUERY DATA TESTING_SYSTEM====================================================================================
--- ===================================================================================================================================================================================================
--- Question 2: lấy ra tất cả các phòng ban
-SELECT * FROM  	Department
-order by DepartmentID ASC ;
-
--- Question 3: lấy ra id của phòng ban "Trưởng bộ môn "
-SELECT 			DepartmentID 
-FROM			Department 
-WHERE			DepartmentName ='Trưởng bộ môn';
-
--- Question 4: lấy ra thông tin account có full name dài nhất
--- cách 1 sử dụng hàm max
-SELECT 			*, 
-				character_length(fullname) AS 'Độ_dài_full_name' FROM `Account`
-WHERE 			character_length(Fullname)=(SELECT MAX(character_length(Fullname)) FROM `Account`);
--- cách 2 dùng order by kết hợp với limit
-SELECT 			Fullname AS 'Ten', 
-				character_length(fullname) AS 'Độ_dài_full_name' 
-FROM 			`account` 
-ORDER BY 		character_length(fullname) DESC 
-LIMIT 			1 ;
-
---  Question 5: Lấy ra thông tin account có full name dài nhất và thuộc phòng ban có id = 3
--- Cách 1 dùng lệnh With...AS
-With 				Fullname_max_and_DepartmenID_là_3 										-- giả lập một bảng đã có sẵn một thuộc tính với câu lệnh
-AS					(SELECT * FROM `Account` WHERE DepartmentID = '3')       				-- WITH....ABC....AS.....Điều kiện 1 
-SELECT * FROM 		Fullname_max_and_DepartmenID_là_3			  							-- và xem ABC như là một bảng đã có sẵn , mình chỉ cần thêm điều kiện còn lại 
-WHERE				character_length(Fullname)= (SELECT max(character_length(Fullname)) FROM Fullname_max_and_DepartmenID_là_3 ) ;
--- Cách 2 
-INSERT INTO  `account` VALUES (11,'thuong1234@gmail.com','thuong1234','Nguyễn Hoàng Hoài THương','3','3','2018-07-11');
-SELECT  			*,
-					character_length(fullname) AS 'Độ_dài_fullname' 
-FROM 				`account` 
-WHERE 				DepartmentID = '3'
-ORDER BY  			character_length(fullname) DESC
-Limit 				1;
-
--- Question 6: Lấy ra tên group đã tham gia trước ngày 20/12/2019
-SELECT * FROM  		`group`
-WHERE				 CreateDate < '2019-12-20';
-
--- Question 7: Lấy ra ID của question có >= 4 câu trả lời
-SELECT * FROM  	answer;
-SELECT 			answer.QuestionID,
-				count(answer.QuestionID) AS số_câu_trả_lời_cho_câu_hỏi   
-FROM 			Answer 
-GROUP BY  		QuestionID
-HAVING 			count(answer.QuestionID) >= 4 ;
-
-
--- Question 8: Lấy ra các mã đề thi có thời gian thi >= 60 phút và được tạo trước ngày 20/12/2019
--- CÁCH 1 DÙNG WITH AS 
-WITH  				QS8 
-AS 					( SELECT `code`, CreateDATE, Duration  FROM Exam WHERE Duration >= '01:00:00' )
-SELECT * FROM 		QS8  
-WHERE				CreateDate < '2019-12-20';
--- CÁCH 2 
-
-
--- Question 9: Lấy ra 5 group được tạo gần đây nhất
-SELECT * FROM 		`Group`
-ORDER BY 			 CreateDate DESC
-LIMIT  				5 ;
-
--- Question 10: Đếm số nhân viên thuộc department có id = 2
-SELECT COUNT(*) FROM `account`
-WHERE departmentID = 2 ;
-
--- Question 11: Lấy ra nhân viên có tên bắt đầu bằng chữ "D" và kết thúc bằng chữ "o"
-SELECT * FROM `account`
-WHERE FullName LIKE 'D%o' ;
-
--- Question 12: Xóa tất cả các exam được tạo trước ngày 20/12/2019
-SELECT * FROM Exam;
-DELETE FROM  Exam 
-WHERE CreateDate <'2019-12-20';
-
--- Question 13: Xóa tất cả các question có nội dung bắt đầu bằng từ "câu hỏi"
--- SELECT * FROM Question 
-DELETE FROM question WHERE Content LIKE 'câu hỏi%';
-
--- Question 14: Update thông tin của account có id = 5 thành tên "Nguyễn Bá Lộc" và email thành loc.nguyenba@vti.com.vn
-SELECT * FROM `Account`;
-UPDATE `Account` SET Fullname='Nguyễn Bá Lộc' , Email='loc.nguyenba@vti.com.vn'
-WHERE AccountID=5;
-
--- Question 15 : update account có id = 5 sẽ thuộc group có id = 4
-UPDATE GroupAccount SET GroupID=4
-WHERE AccountID=5;
+-- =================================
