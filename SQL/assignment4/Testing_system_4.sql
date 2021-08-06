@@ -26,9 +26,9 @@ CREATE TABLE `Account` (
     
     
     DepartmentID SMALLINT UNSIGNED,
-		-- FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID),
+		 FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID) ON DELETE CASCADE,
     PositionID SMALLINT UNSIGNED,
-		-- FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID),
+		 FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID) ON DELETE CASCADE,
     CreateDate DATE NOT NULL
 );
 -- ---------------------------------------TẠO BẢNG GROUP--------------------------------------------
@@ -37,16 +37,16 @@ CREATE TABLE  						`Group`(
 	GroupID							MEDIUMINT UNSIGNED PRIMARY KEY auto_increment,
     GroupName						VARCHAR(50) UNIQUE KEY NOT NULL ,
     CreatorID						MEDIUMINT UNSIGNED ,
-		-- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
+		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
     CreateDate						DATETIME NOT NULL
 );
 -- -----------------------------------------TẠO BẢNG GROUPACCOUNT-------------------------------------
 DROP TABLE IF EXISTS 				GroupAccount;
 CREATE TABLE  						GroupAccount(
 	GroupID							MEDIUMINT UNSIGNED  ,
-		  -- FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID),
+		   FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE,
     AccountID						MEDIUMINT UNSIGNED,
-		-- FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID),
+		 FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
     JoinDate						DATETIME
 );
 -- -----------------------------------------TẠO BẢNG TYPEQUESTION-------------------------------------
@@ -67,11 +67,11 @@ CREATE TABLE  						Question(
 	QuestionID						SMALLINT UNSIGNED PRIMARY KEY auto_increment ,
     Content							VARCHAR(100)  NULL,
     CategoryID						SMALLINT UNSIGNED,
-		-- FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID),
+		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
     TypeID							SMALLINT UNSIGNED,
-		-- FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID),
+		 FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE,
     CreatorID						MEDIUMINT UNSIGNED,
-		-- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
+		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
     CreateDate						DATETIME 
 );
 -- --------------------------------------------------TẠO BẢNG ANSWER------------------------------------
@@ -80,7 +80,7 @@ CREATE TABLE  						Answer(
 	AnswerID						SMALLINT UNSIGNED UNIQUE KEY NOT NULL auto_increment ,
     Content							VARCHAR(500) NULL ,
     QuestionID						SMALLINT UNSIGNED,
-		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID),
+		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE,
     isCorrect						ENUM('Right','Wrong') NOT NULL
 );
 -- --------------------------------------------------TẠO BẢNG EXAM------------------------------------
@@ -90,19 +90,19 @@ CREATE TABLE  						Exam(
     Codee							VARCHAR(15) UNIQUE KEY NOT NULL ,
     Title							VARCHAR(20) NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
-		-- FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID),
+		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
     Duration						TIME NOT NULL,
     CreatorID						MEDIUMINT UNSIGNED,
-		-- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID),
+		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
     CreateDate						DATE
 );
 -- -----------------------------------------------------TẠO BẢNG EXAMQUESTION-------------------------
 DROP TABLE IF EXISTS 				ExamQuestion;
 CREATE TABLE  						ExamQuestion(
 	ExamID							SMALLINT UNSIGNED,
-		-- FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
-    QuestionID						SMALLINT UNSIGNED
-		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
+		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE,
+    QuestionID						SMALLINT UNSIGNED,
+		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE
 );
 -- ALTER TABLE examquestion
 -- DROP FOREIGN KEY `examquestion_ibfk_1`;
@@ -113,7 +113,7 @@ CREATE TABLE  						ExamQuestion(
 -- ===================================================================================================================================================================================================
 -- ==================================ADD DATA FOR DEPARTMENT ====================================================================================
 SET SQL_SAFE_UPDATES = 0;
-TRUNCATE  Department;
+DELETE FROM  Department;
 INSERT INTO  Department( DepartmentName) 
 VALUES 	
 			( 		N'Trưởng TT'			),
@@ -270,7 +270,10 @@ VALUES
             ('000006',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
             ('000007',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
             ('000008',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000009',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20');
+            ('000009',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000010',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000011',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000012',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20');
 -- SELECT * FROM Exam ;
 -- ================================================ADD DATA FOR TABLE ExamQuestion==================================
 DELETE FROM ExamQuestion;
@@ -307,14 +310,9 @@ ORDER BY		AccountID ASC  ;
 -- UPDATE  `Account` SET CreateDate = '2009-07-09' WHERE  AccountID=1;   Thay đổi Data xem lệnh có hoạt động đúng hay không .
 -- UPDATE  `Account` SET CreateDate = '2018-07-09' WHERE  AccountID=1;
 
-SELECT  		`Account`.AccountID,
-				Email,
-                Fullname,
-                Username,
-                Department.DepartmentId,
-                Department.DepartmentName,
-                `Position`.PositionID,
-                `Position`.PositionName,
+SELECT  		`Account`.*,
+				Department.DepartmentName,
+				`Position`.PositionName,
                 Joindate AS 'Ngày vào nhóm' ,
                 GroupAccount.GroupID, 
                 `Account`.CreateDate AS 'Ngày Tạo Account'
@@ -325,19 +323,14 @@ INNER JOIN 		GroupAccount	ON		GroupAccount.AccountID=`Account`.AccountID
 WHERE 			`Account`.CreateDate > '2010-12-20';
 
 -- Question 3: Viết lệnh để lấy ra tất cả các student 
-SELECT			`Account`.AccountID,
-				Email,
-				Username,
-				Fullname,
-				Department.DepartmentID,
+SELECT			`Account`.*,
 				Department.DepartmentName,
-				`Position`.PositionID,
 				`Position`.PositionName,
 				CreateDate
-From 			`Account`
+FROM			`Account`
 INNER JOIN 		Department ON Department.DepartmentID= `Account`.DepartmentID
 INNER JOIN 		`Position` ON `Position`.PositionID=`Account`.PositionID
-Where 			`Position`.positionName = ' Student' OR  Department.departmentName='Học sinh sinh viên ';
+WHERE 			`Position`.positionName = ' Student' OR  Department.departmentName='Học sinh sinh viên ';
 
 -- Question 4: Viết lệnh để lấy ra danh sách các phòng ban có >3 nhân viên
 
@@ -359,114 +352,111 @@ SELECT 			examquestion.questionID,
 FROM			examquestion
 INNER JOIN		question ON examquestion.questionID = question.questionID
 GROUP BY 		examquestion.questionID
-order by  		COUNT(examquestion.questionID) DESC
+ORDER BY  		COUNT(examquestion.questionID) DESC
 LIMIT 			1;
 
 --  Question 6: Thông kê mỗi category Question được sử dụng trong bao nhiêu Question
-
-select * from categoryQuestion;
-select * from Question; 
-
-select  Categoryquestion.categoryname , count(question.content) AS Số_câu_hỏi_được_sử_dụng 
-from categoryquestion
-inner join  question
-on  Categoryquestion.CategoryID=question.CategoryID 
-group by Categoryquestion.categoryname;
+SELECT  			Categoryquestion.categoryname , 
+					count(question.content) AS Số_câu_hỏi_được_sử_dụng 
+FROM 				categoryquestion
+INNER JOIN  		question
+ON  				Categoryquestion.CategoryID=question.CategoryID 
+GROUP BY 			Categoryquestion.categoryname;
   
   
 -- Question 7: Thông kê mỗi Question được sử dụng trong bao nhiêu Exam
 -- select * from question;
 -- select * from examquestion;
 -- select * from exam  ;
- select				examquestion.questionID,
+SELECT				examquestion.questionID,
 					question.content,
 					count(examquestion.examID) AS số_exam_có_câu_hỏi_này
- from  				examquestion
- inner join 		question 
- On 				question.questionId= examquestion.questionID
- group by			examquestion.questionID
- order by 			count(examquestion.examID) DESC 
- LIMIT 				1;
+FROM  				examquestion
+INNER JOIN 		question 
+ON 				question.questionId= examquestion.questionID
+GROUP BY			examquestion.questionID
+ORDER BY  			count(examquestion.examID) DESC 
+LIMIT 				1;
  -- select * from examquestion
  -- Question 8: Lấy ra Question có nhiều câu trả lời nhất
-select 	answer.questionID,
+SELECT 	answer.questionID,
 		answer.content,
 		count(answer.questionID) AS số_câu_trả_lời_cho_câu_hỏi_này
         
-from answer
-where  answer.content is not null 
-group by answer.questionID;
+FROM answer
+WHERE  answer.content is not null 
+GROUP BY answer.questionID;
+
 
 -- Question 9: Thống kê số lượng account trong mỗi group 
-select * from groupaccount;
-select groupaccount.groupID,
-		count(groupaccount.accountID) AS số_lượng_account_mỗi_group
-from groupaccount
-group by groupaccount.groupID;
+SELECT 				groupaccount.groupID,
+					count(groupaccount.accountID) AS số_lượng_account_mỗi_group
+FROM  				groupaccount
+GROUP BY			groupaccount.groupID;
 
 
 -- Question 10: Tìm chức vụ có ít người nhất
-select 				`position`.positionID,
+SELECT 				`position`.positionID,
 					`position`.positionName, 
 					 count(`account`.accountID) Số_người_thuộc_chức_vụ 
-from 				`position`
-inner join			`account` 
-on   				`position`.positionID=  `account`.positionID
-group by			 positionID
-having 				 count(`account`.accountID)  <=1 ;
+FROM 				`position`
+INNER JOIN			`account` 
+ON   				`position`.positionID=  `account`.positionID
+GROUP BY			 positionID
+HAVING				 count(`account`.accountID)  <=1 ;
 
 --  Question 11: Thống kê mỗi phòng ban có bao nhiêu GIÁM ĐỐc , Phó giám đốc, mentor , student ......
-select 			`account`.departmentID,
-				department.departmentName,
-				count(`account`.departmentID)
-from   			`account`
-inner join 		department
-on 				`account`.departmentID= department.departmentID
-group by 		departmentName
-order by 		departmentID ASC 
+SELECT 				`account`.departmentID,
+					department.departmentName,
+					count(`account`.departmentID)
+FROM   				`account`
+INNER JOIN 			department
+ON 					`account`.departmentID= department.departmentID
+GROUP BY			departmentName
+ORDER BY  			departmentID ASC 
 ;
 -- Question 12: Lấy thông tin chi tiết của câu hỏi bao gồm: thông tin cơ bản của question, loại câu hỏi, ai là người tạo ra câu hỏi, câu trả lời là gì, … 
 				
 
-select question.questionID,
-		Typequestion.TypeName AS Loại_câu_hỏi,
-        `account`.FullName AS Người_tạo_câu_hỏi,
-        answer.content AS Câu_trả_lời
-from question 
-inner join Typequestion on Typequestion.TypeID = question.TypeID
-inner join `account` on `account`.accountID= question.creatorID
-inner join answer on question.questionID= answer.questionID ;
+SELECT				question.questionID,
+					Typequestion.TypeName AS Loại_câu_hỏi,
+					`account`.FullName AS Người_tạo_câu_hỏi,
+					answer.content AS Câu_trả_lời
+FROM 				question 
+INNER JOIN 			Typequestion on Typequestion.TypeID = question.TypeID
+INNER JOIN 			`account` on `account`.accountID= question.creatorID
+INNER JOIN			answer on question.questionID= answer.questionID ;
 
 -- Question 13: Lấy ra số lượng câu hỏi của mỗi loại tự luận hay trắc nghiệm
 
-select  typequestion.typename as Loại_câu_hỏi,
-		count(question.typeID) as Số_lượng
-from question 
-inner join typequestion on typequestion.typeID= question.typeID 
-group by typequestion.typename; 
+SELECT   			typequestion.typename AS Loại_câu_hỏi,
+					count(question.typeID) AS Số_lượng
+FROM 				question 
+INNER JOIN 			typequestion ON typequestion.typeID= question.typeID 
+GROUP BY 			typequestion.typename; 
 
 -- Question 14: Lấy ra group không có account nào 
 -- cách 1 
 
-select 		groupaccount.groupID,
-			`group`.groupName,
-            count(groupaccount.AccountID) AS số_thành_viên_là
-from 		groupaccount
-inner join 	`group` on `group`.groupID= `groupaccount`.groupID
-group by groupaccount.groupID
-having count(groupaccount.AccountID) =0;
+SELECT 				groupaccount.groupID,
+					`group`.groupName,
+					count(groupaccount.AccountID) AS số_thành_viên_là
+FROM  				groupaccount
+INNER JOIN 			`group` ON `group`.groupID= `groupaccount`.groupID
+GROUP BY 			groupaccount.groupID
+HAVING 				count(groupaccount.AccountID) =0;
 
 
 -- Question 15: Lấy ra group không có account nào 
 
 -- Question 16: Lấy ra question không có answer nào
-select 		question.questionID,
-			question.content,
-			count(answer.content) AS CÂU_TRẢ_LỜI
-from question 
-inner join answer on answer.QuestionID= question.questionID 
-group by questionID
-having count(answer.content)=0 ;
+SELECT 			question.questionID,
+				question.content,
+				count(answer.content) AS CÂU_TRẢ_LỜI
+FROM 			question 
+INNER JOIN 		answer ON answer.QuestionID= question.questionID 
+GROUP BY  		questionID
+HAVING 			count(answer.content)=0 ;
 
 
 -- Exercise 2: Union
@@ -475,66 +465,86 @@ having count(answer.content)=0 ;
 -- b) Lấy các account thuộc nhóm thứ 2
 -- c) Ghép 2 kết quả từ câu (a) và câu (b) sao cho không có record nào trùng nhau
 -- Câu a -----------------------------
-select			`groupaccount`.GroupID, `account`.* 
-from 			`groupaccount` 
-inner join 		`account` on `groupaccount`.accountID= `account`.accountID
-where 			`groupaccount`.groupID =1;
+SELECT				`groupaccount`.GroupID, 
+					`account`.* 
+FROM 				`groupaccount` 
+INNER JOIN 			`account` 
+ON 					`groupaccount`.accountID= `account`.accountID
+WHERE 				`groupaccount`.groupID =1;
 -- Câu b -----------------------------
-select			`groupaccount`.GroupID, `account`.* 
-from 			`groupaccount` 
-inner join 		`account` on `groupaccount`.accountID= `account`.accountID
-where 			`groupaccount`.groupID =2;
+SELECT				`groupaccount`.GroupID, 
+					`account`.* 
+FROM  				`groupaccount` 
+INNER JOIN 			`account` 
+ON 					`groupaccount`.accountID= `account`.accountID
+WHERE 				`groupaccount`.groupID =2;
 -- Câu c -----------------------------
-select			`groupaccount`.GroupID, 
-				`account`.* 
-from 			`groupaccount` 
-inner join 		`account` on `groupaccount`.accountID= `account`.accountID
-where 			`groupaccount`.groupID =1
-union DISTINCT
-select			`groupaccount`.GroupID, `account`.* 
-from 			`groupaccount` 
-inner join		`account` on `groupaccount`.accountID= `account`.accountID
-where 			`groupaccount`.groupID =2;
+SELECT				`groupaccount`.GroupID, 
+					`account`.* 
+FROM  				`groupaccount` 
+INNER JOIN 			`account` 
+ON 					`groupaccount`.accountID= `account`.accountID
+WHERE 				`groupaccount`.groupID =1
+
+
+UNION DISTINCT
+
+
+SELECT				`groupaccount`.GroupID, 
+					`account`.* 
+FROM  				`groupaccount` 
+INNER JOIN			`account` 
+ON 					`groupaccount`.accountID= `account`.accountID
+WHERE 				`groupaccount`.groupID =2;
 
 -- Question 18:
 -- a) Lấy các group có lớn hơn 5 thành viên
 -- b) Lấy các group có nhỏ hơn 7 thành viên
 -- c) Ghép 2 kết quả từ câu a) và câu b) 
-
+-- THÊM DỮ LIỆU
 insert into groupaccount(groupID, accountID,joindate)
 values ('2','11','2021-08-04'),
 ('2','12','2021-08-04'),
 ('2','13','2021-08-04'),
 ('2','14','2021-08-04'),
 ('2','15','2021-08-04');
-select * from groupaccount;
+
 
 -- câu a------------------
-select * from groupaccount;
-select  groupaccount.groupID,
-		count(groupaccount.groupID) AS số_thành_viên
-from groupaccount 
-group by groupID
-having count(groupaccount.groupID) > 5;
+SELECT  			groupaccount.groupID,
+					count(groupaccount.groupID) AS số_thành_viên
+FROM 				groupaccount 
+GROUP BY  			groupID
+HAVING 				count(groupaccount.groupID) > 5;
+
+
 -- câu b --------------------------
-select * from groupaccount;
-select  groupaccount.groupID,
-		count(groupaccount.groupID) AS số_thành_viên
-from groupaccount 
-group by groupID
-having count(groupaccount.groupID) <7 ;
+SELECT  			groupaccount.groupID,
+					count(groupaccount.groupID) AS số_thành_viên
+FROM 				groupaccount 
+WHERE 				groupaccount.accountID is not null 
+GROUP BY 			groupID
+HAVING 				count(groupaccount.groupID) <7 ;
+
+
 -- câu C ---------------------
-select * from groupaccount;
-select  groupaccount.groupID,
-		count(groupaccount.groupID) AS số_thành_viên
-from groupaccount 
-group by groupID
-having count(groupaccount.groupID) > 5
-union 
-select * from groupaccount;
-select  groupaccount.groupID,
-		count(groupaccount.groupID) AS số_thành_viên
-from groupaccount 
-group by groupID
-having count(groupaccount.groupID) <7 
+
+SELECT  			groupaccount.groupID,
+					count(groupaccount.groupID) AS số_thành_viên
+FROM 				groupaccount 
+GROUP BY 			groupID
+HAVING 				count(groupaccount.groupID) > 5
+
+
+UNION DISTINCT
+
+
+SELECT 	 			groupaccount.groupID,
+					count(groupaccount.groupID) AS số_thành_viên
+FROM 				groupaccount 
+WHERE 				groupaccount.accountID is not null 
+GROUP BY 			groupID
+HAVING 				count(groupaccount.groupID) <7  
+
+
 
