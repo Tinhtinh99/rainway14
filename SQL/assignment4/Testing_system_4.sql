@@ -26,9 +26,9 @@ CREATE TABLE `Account` (
     
     
     DepartmentID SMALLINT UNSIGNED,
-		 FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID) ON DELETE CASCADE,
+		 FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID) ON DELETE CASCADE ON UPDATE CASCADE,
     PositionID SMALLINT UNSIGNED,
-		 FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID) ON DELETE CASCADE,
+		 FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate DATE NOT NULL
 );
 -- ---------------------------------------TẠO BẢNG GROUP--------------------------------------------
@@ -37,16 +37,16 @@ CREATE TABLE  						`Group`(
 	GroupID							MEDIUMINT UNSIGNED PRIMARY KEY auto_increment,
     GroupName						VARCHAR(50) UNIQUE KEY NOT NULL ,
     CreatorID						MEDIUMINT UNSIGNED ,
-		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATETIME NOT NULL
 );
 -- -----------------------------------------TẠO BẢNG GROUPACCOUNT-------------------------------------
 DROP TABLE IF EXISTS 				GroupAccount;
 CREATE TABLE  						GroupAccount(
 	GroupID							MEDIUMINT UNSIGNED  ,
-		   FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE,
+		   FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE ON UPDATE CASCADE,
     AccountID						MEDIUMINT UNSIGNED,
-		 FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		 FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     JoinDate						DATETIME
 );
 -- -----------------------------------------TẠO BẢNG TYPEQUESTION-------------------------------------
@@ -67,11 +67,11 @@ CREATE TABLE  						Question(
 	QuestionID						SMALLINT UNSIGNED PRIMARY KEY auto_increment ,
     Content							VARCHAR(100)  NULL,
     CategoryID						SMALLINT UNSIGNED,
-		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
+		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
     TypeID							SMALLINT UNSIGNED,
-		 FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE,
+		 FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreatorID						MEDIUMINT UNSIGNED,
-		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATETIME 
 );
 -- --------------------------------------------------TẠO BẢNG ANSWER------------------------------------
@@ -80,7 +80,7 @@ CREATE TABLE  						Answer(
 	AnswerID						SMALLINT UNSIGNED UNIQUE KEY NOT NULL auto_increment ,
     Content							VARCHAR(500) NULL ,
     QuestionID						SMALLINT UNSIGNED,
-		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE,
+		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE,
     isCorrect						ENUM('Right','Wrong') NOT NULL
 );
 -- --------------------------------------------------TẠO BẢNG EXAM------------------------------------
@@ -90,19 +90,19 @@ CREATE TABLE  						Exam(
     Codee							VARCHAR(15) UNIQUE KEY NOT NULL ,
     Title							VARCHAR(20) NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
-		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE,
+		 FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
     Duration						TIME NOT NULL,
     CreatorID						MEDIUMINT UNSIGNED,
-		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE,
+		 FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATE
 );
 -- -----------------------------------------------------TẠO BẢNG EXAMQUESTION-------------------------
 DROP TABLE IF EXISTS 				ExamQuestion;
 CREATE TABLE  						ExamQuestion(
 	ExamID							SMALLINT UNSIGNED,
-		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE,
+		 FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE ON UPDATE CASCADE,
     QuestionID						SMALLINT UNSIGNED,
-		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE
+		 FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- ALTER TABLE examquestion
 -- DROP FOREIGN KEY `examquestion_ibfk_1`;
@@ -273,7 +273,11 @@ VALUES
             ('000009',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
             ('000010',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
             ('000011',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000012',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20');
+            ('000012',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+			('000013',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20'),
+			('000014',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20'),
+			('000015',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20');
+        
 -- SELECT * FROM Exam ;
 -- ================================================ADD DATA FOR TABLE ExamQuestion==================================
 DELETE FROM ExamQuestion;
@@ -290,7 +294,9 @@ VALUES
             (9,10),
             (10,7),
             (11,8),
-            (12,9);
+            (12,9),
+            (13,9),
+            (14,9);
             
 -- SELECT * FROM ExamQuestion;
 -- ===================================================================================================================================================================================================
@@ -324,36 +330,47 @@ WHERE 			`Account`.CreateDate > '2010-12-20';
 
 -- Question 3: Viết lệnh để lấy ra tất cả các student 
 SELECT			`Account`.*,
-				Department.DepartmentName,
-				`Position`.PositionName,
-				CreateDate
+				`Position`.PositionName
 FROM			`Account`
-INNER JOIN 		Department ON Department.DepartmentID= `Account`.DepartmentID
 INNER JOIN 		`Position` ON `Position`.PositionID=`Account`.PositionID
-WHERE 			`Position`.positionName = ' Student' OR  Department.departmentName='Học sinh sinh viên ';
+WHERE 			`Position`.positionName = 'Student';
 
 -- Question 4: Viết lệnh để lấy ra danh sách các phòng ban có >3 nhân viên
 
 SELECT 			Department.DepartmentName,
-				count(`account`.DepartmentID) AS Số_lượng_nhân_viên ,
-                `position`.PositionName
+				count(`account`.DepartmentID) AS Số_lượng_nhân_viên 
 FROM 			`account` 
 INNER JOIN 		department 
 ON 				`Account`.DepartmentID = Department.DepartmentID
-INNER JOIN  	`position` ON `position`.positionID=`Account`.positionID
 GROUP BY 		`account`.DepartmentID
 HAVING 			COUNT(`account`.DepartmentID) >=3;
 
--- QUestion5 Viết lệnh để lấy ra danh sách câu hỏi được sử dụng trong đề thi nhiều nhất
+-- Question5 Viết lệnh để lấy ra danh sách câu hỏi được sử dụng trong đề thi nhiều nhất
 -- select * from examquestion; 
-SELECT 			examquestion.questionID,
-				question.content,
-				COUNT(examquestion.questionID) AS Số_lượng_câu_hỏi
-FROM			examquestion
-INNER JOIN		question ON examquestion.questionID = question.questionID
-GROUP BY 		examquestion.questionID
-ORDER BY  		COUNT(examquestion.questionID) DESC
-LIMIT 			1;
+SELECT 				examquestion.questionID,
+					COUNT(examquestion.questionID) AS SL,
+                    Question.Content
+FROM 				examquestion 
+INNER JOIN 			Question ON Question.questionID=examquestion.questionID
+GROUP BY 			examquestion.questionID
+HAVING SL=			(Select count(examquestion.questionID) AS SL
+					from Examquestion
+					group by Examquestion.questionID 
+					order by SL DESC 
+					LIMIT 1);
+
+-- liệt kê danh sách phòng ban có nhiều nhân viên nhất
+SELECT 							`account`.departmentID,
+								department.departmentName,
+								Count(`account`.departmentID) AS SL_nhân_viên 
+FROM 							`account`
+INNER JOIN 						Department ON Department.DepartmentID=`Account`.DepartmentID 
+GROUP BY 						`account`.departmentID
+HAVING SL_nhân_viên = 			(SELECT Count(`account`.departmentID) AS SL_nhân_viên
+								FROM 	`account`
+								GROUP BY  `account`.departmentID
+								ORDER BY  SL_nhân_viên DESC
+								LIMIT 1);
 
 --  Question 6: Thông kê mỗi category Question được sử dụng trong bao nhiêu Question
 SELECT  			Categoryquestion.categoryname , 
