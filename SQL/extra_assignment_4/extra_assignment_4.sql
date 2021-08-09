@@ -105,7 +105,7 @@ FROM 		Employee
 GROUP BY 	Employee_name
 ORDER BY	Department_number ASC; 
 
--- Question 6: Viết lệnh để lấy ra danh sách nhân viên có > 1 skills.
+-- Question 6: Viết lệnh để lấy ra danh sách nhân viên có >= 1 skills.
 --  Hướng dẫn: sử dụng DISTINCT
 SELECT DISTINCT 	Employee_name,
 					Count(Employee_skill.Employee_number) AS 'SỐ_SKILL'
@@ -113,7 +113,7 @@ FROM 				Employee_skill
 INNER JOIN 			Employee 
 ON 					Employee.Employee_number=Employee_skill.Employee_number
 GROUP BY 			Employee_name
-HAVING 				Count(Employee_skill.Employee_number)>1 
+HAVING 				Count(Employee_skill.Employee_number)>=1 
 
 
 
