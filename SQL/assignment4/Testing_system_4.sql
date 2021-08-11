@@ -63,7 +63,7 @@ CREATE TABLE  						CategoryQuestion(
 DROP TABLE IF EXISTS 				Question;
 CREATE TABLE  						Question(
 	QuestionID						SMALLINT UNSIGNED PRIMARY KEY auto_increment ,
-    Content							VARCHAR(100)  NULL,
+    Content							VARCHAR(500)  NULL,
     CategoryID						SMALLINT UNSIGNED,
 		 -- FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
     TypeID							SMALLINT UNSIGNED,
@@ -123,7 +123,10 @@ VALUES
             ('Học sinh sinh viên'	),
             ('Bảo vệ '				),
             ('Phòng ăn'				),
-            ('Vệ sinh'				);
+            ('Vệ sinh'				),
+            ('Sale');
+            INSERT INTO `exammanagement2`.`department` (`DepartmentID`, `DepartmentName`) VALUES ('12', 'CUTE');
+
 -- ======================================ADD DATA FOR Posiition======================================================================================
 
 DELETE FROM `Position`;
@@ -139,7 +142,9 @@ VALUES
             ('NV Bảo vệ'	),
             ('Đầu bếp'		),
             ('Lao công'		),
-            ('Ghi Chép'		);
+            ('Ghi Chép'		),
+            ('nhân viên sale');
+            
 -- ============================================ADD DATA FOR Accountt====================================================
 TRUNCATE `Account`;
 DELETE FROM `Account` ;
@@ -159,7 +164,9 @@ VALUES
             ('tien1236@gmail.com','tien1236','Hoàng văn mến','8','8','2018-07-09'		),
             ('tien1237@gmail.com','tien1237','Hoàng văn đức','8','8','2018-07-09'		),
             ('tien1238@gmail.com','tien1238','Hoàng văn anh','8','8','2018-07-09'		),
-            ('tien1239@gmail.com','tien1239','Hoàng văn tuân','8','8','2018-07-09'		);
+            ('tien1239@gmail.com','tien1239','Hoàng văn tuân','8','8','2018-07-09'		),
+            ('ngoc12343@gmail.com','ngoc9977','Hoàng Mạnh Ngọc','11','12','2018-07-09'		),
+             ('ngoc12323@gmail.com','ngoc9277','Hoàng Đức Ngọc','11','12','2018-07-09'		);
 -- ====================================ADD DATA FOR TABLE GROUP============================================================
 DELETE FROM `Group`;
 INSERT INTO `Group`(GroupID, GroupName, CreatorID, CreateDate)
@@ -191,7 +198,10 @@ VALUES
 			(2,'12','2021-08-04'),
 			(2,'13','2021-08-04'),
 			(2,'14','2021-08-04'),
-			(2,'15','2021-08-04');
+			(7,'1','2021-08-04'),
+            (6,'1','2021-08-04'),
+            (7,'2','2021-08-04'),
+            (6,'2','2021-08-04');
 -- =================================================ADD DATA FOR TABLE TYPEQUESTION================================================
 DELETE FROM TypeQuestion;
 INSERT INTO TypeQuestion (TypeID, TypeName)
@@ -215,6 +225,7 @@ VALUES
 			('11', 'Sinh học'),
 			('12', 'Văn hóa');
 -- ============================================ADD DATA FROM Question=======================
+TRUNCATE QUESTION;
 DELETE FROM Question;
 INSERT INTO Question(Content, CategoryID, TypeID, CreatorID, CreateDate)
 VALUES 
@@ -230,7 +241,11 @@ VALUES
             ('Câu hỏi về địa','10','2','4','2021-07-31'),
             ('Câu hỏi về địa','10','2','4','2021-07-31'),
             ('Câu hỏi về địa','10','2','4','2021-07-31'),
-            ('Câu hỏi về địa','10','2','4','2021-07-31');
+            ('Câu hỏi về địa','10','2','4','2021-07-31'),
+            ('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á, nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
+  - Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','7','1','3','2021-07-31'),
+  ('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á, nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
+  - Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','6','2','3','2021-07-31');
 -- ===========================================ADD DATA FOR TABLE ANSWER===========================
 TRUNCATE Answer;
 DELETE FROM Answer;
