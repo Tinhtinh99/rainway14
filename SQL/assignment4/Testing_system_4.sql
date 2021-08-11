@@ -394,20 +394,24 @@ from  		question Q left JOIN examquestion EX ON Q.questionID=EX.questionID
 Group BY 	(Q.questionID);
  
 -- Question 8: Lấy ra Question có nhiều câu trả lời nhất
--- CÁCH 1 : DÙNG SELECT ĐÔ
+-- CÁCH 1 : DÙNG SELECT ĐÔi
 SELECT 			A.QuestionID,
 				Q.content,
-				count(A.AnswerID) AS `SL`
+				count(A.AnswerID) AS `SL_Answer`
 From 			Answer A 
 INNER JOIN 		Question Q 
 ON 				A.questionID=Q.questionID
 Group by  		A.QuestionID
-HAVING `SL`= 
-(select count(A.AnswerID) AS `SL`
+HAVING `SL_Answer`= 
+(select count(A.AnswerID) AS `SL_Answer`
 From Answer A 
 Group by  A.QuestionID
-ORDER BY `SL` DESC LIMIT 1);
+ORDER BY `SL_Answer` DESC LIMIT 1);
+-- select max(`T`.`SL_Answer`) From (select count(A.AnswerID) AS `SL_Answer` FROM Answer A Group BY A.questionID) AS `T`
+
 -- cách 2 : select đôi + hàm MAX 
+
+
 SELECT 			A.QuestionID,
 				Q.content,
 				count(A.AnswerID) AS `SL`
@@ -438,10 +442,11 @@ HAVING `SL` =  (SELECT  count(A.accountID) AS `SL` FROM `Position` P LEFT JOIN `
  
 
 --  Question 11: Thống kê mỗi phòng ban có bao nhiêu GIÁM ĐỐc , Phó giám đốc, mentor , student ......
-SELECT D.*, count(A.AccountID) AS SL 
-FROM Department D 
-LEFT JOIN `account` A ON D.DepartmentID=A.DepartmentID
-GROUP BY D.DepartmentID;
+SELECT A.departmentID, D.DepartmentName, A.PositionID, P.PositionName, Count(*) AS `SL_NV`
+FROM `Account` A 
+JOIN `Department` D USING(DepartmentID) 
+JOIN `Position` P USING(PositionID)
+GROUP BY A.DepartmentID, A.PositionID;
 
 -- Question 12: Lấy thông tin chi tiết của câu hỏi bao gồm: thông tin cơ bản của question, loại câu hỏi, ai là người tạo ra câu hỏi, câu trả lời là gì, … 
 SELECT				question.questionID,
@@ -553,7 +558,5 @@ FROM `Group` G
 LEFT JOIN Groupaccount GA ON G.GroupID=GA.GroupID 
 GROUP BY G.GroupID 
 HAVING SL < 7  ;
-
-
 
 
