@@ -14,7 +14,7 @@ CREATE TABLE			`Department`(
 DROP TABLE IF EXISTS	`Employee`;
 CREATE TABLE			`Employee`(
 `Employee_number`		SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-`Employee_name`			VARCHAR(50) UNIQUE KEY NOT NULL,
+`Employee_name`			VARCHAR(50) UNIQUE KEY NOT NULL ,
 `Department_number`		SMALLINT UNSIGNED,
 FOREIGN KEY (`Department_number`) REFERENCES `Department`(`Department_number`) ON DELETE CASCADE 
 );
@@ -40,6 +40,8 @@ INSERT INTO `employee_management`.`department` (`Department_name`) VALUES ('Phò
 INSERT INTO `employee_management`.`department` (`Department_name`) VALUES ('Phòng Marketing');
 INSERT INTO `employee_management`.`department` (`Department_name`) VALUES ('Phòng Thiết Kế');
 INSERT INTO `employee_management`.`department` (`Department_name`) VALUES ('Phòng Chủ Tịch');
+INSERT INTO `employee_management`.`department` (`Department_number`, `Department_name`) VALUES ('11', 'Phòng chủ nhiệm');
+
 
 -- ADD DATA Employee 
 DELETE FROM `Employee`;
@@ -99,11 +101,16 @@ HAVING 			COUNT(Employee.Employee_number) >=3 ;
 
 -- Question 5: Viết lệnh để lấy ra danh sách nhân viên của mỗi văn phòng ban.
 -- Hướng dẫn: sử dụng GROUP By
-SELECT 		Department_number AS 'PHÒNG BAN' ,
-			Employee_name AS 'NHÂN VIÊN'
-FROM 		Employee
-GROUP BY 	Employee_name
-ORDER BY	Department_number ASC; 
+	
+SELECT 		D. Department_number AS 'PHÒNG BAN', D.Department_name,
+			E. Employee_name AS 'NHÂN VIÊN' 
+FROM 		Employee E 
+RIGHT JOIN  Department D USING(Department_number)
+GROUP BY 	E.Employee_name
+ORDER BY	D.Department_number ASC;
+
+
+
 
 -- Question 6: Viết lệnh để lấy ra danh sách nhân viên có >= 1 skills.
 --  Hướng dẫn: sử dụng DISTINCT
