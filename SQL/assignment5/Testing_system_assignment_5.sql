@@ -11,17 +11,16 @@ SELECT * FROM 			`DS_NV`;
 
 
 -- Question 2: Tạo view có chứa thông tin các account tham gia vào nhiều group nhất
-CREATE OR REPLACE VIEW 	`Account of many group` AS 
+CREATE OR REPLACE VIEW 	`Account_of_many_group` AS 
 SELECT 					A.*,count(GA.GroupID) AS `Số_nhóm_đã_tham_gia`
 FROM 					`Groupaccount` GA 
 RIGHT JOIN 				`account` A USING(AccountID)
 GROUP BY 				A.AccountID 
-HAVING 					`Số_nhóm_đã_tham_gia` = (SELECT count(GA.GroupID) AS `Số_nhóm_đã_tham_gia`
-												FROM `Groupaccount` GA 
-												RIGHT JOIN `account` A USING(AccountID)
-												GROUP BY A.AccountID
+HAVING 					`Số_nhóm_đã_tham_gia` = (SELECT count(GroupID) AS `Số_nhóm_đã_tham_gia`
+												FROM `Groupaccount`  
+												GROUP BY AccountID
 												ORDER BY `Số_nhóm_đã_tham_gia` DESC LIMIT 1);
-SELECT * FROM 			`Account of many group`;
+SELECT * FROM 			`Account_of_many_group`;
 
 
 -- Question 3: Tạo view có chứa câu hỏi có những content quá dài (content quá 300 từ được coi là quá dài) và xóa nó đi 
@@ -44,9 +43,8 @@ SELECT					D.*,
 FROM					`Department` D 
 LEFT JOIN 				`Account` A USING(DepartmentID)
 Group by				D.DepartmentID
-HAVING 					`Số nhân viên`= (Select max(`y`.`Số nhân viên`) from (SELECT count(A.accountID) AS `Số nhân viên` FROM `Department` D 
-																				LEFT JOIN 	`Account` A USING(DepartmentID)
-																				Group by	D.DepartmentID) AS `Y`);
+HAVING 					`Số nhân viên`= (Select max(`y`.`Số nhân viên`) from (SELECT count(A.accountID) AS `Số nhân viên` FROM `account` A
+																				Group by	A.DepartmentID) AS `Y`);
 SELECT * FROM 			`PB`;
 -- cách 2, dùng order by limit 
 CREATE OR REPLACE VIEW `PBc2` AS
@@ -56,9 +54,8 @@ FROM					`Department` D
 LEFT JOIN 				`Account` A 		USING(DepartmentID)
 Group by				D.DepartmentID
 HAVING 					`Số nhân viên`=(SELECT count(A.accountID) AS `Số nhân viên`
-										FROM  `Department` D 
-										LEFT JOIN `Account` A USING(DepartmentID)
-										Group by D.DepartmentID
+										FROM  `account` A
+										Group by A.DepartmentID
 										ORDER BY `Số nhân viên` DESC LIMIT 1);
 SELECT * FROM 			`PBc2`;
 
