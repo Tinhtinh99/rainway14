@@ -70,7 +70,7 @@ CREATE TABLE  						Question(
 		-- FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreatorID						MEDIUMINT UNSIGNED,
 		 -- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
-    CreateDate						DATETIME 
+    CreateDate						DATE
 );
 -- --------------------------------------------------TẠO BẢNG ANSWER------------------------------------
 DROP TABLE IF EXISTS 				Answer;
@@ -111,6 +111,7 @@ CREATE TABLE  						ExamQuestion(
 -- ===================================================================================================================================================================================================
 -- ==================================ADD DATA FOR DEPARTMENT ====================================================================================
 SET SQL_SAFE_UPDATES = 0;
+TRUNcATE Department;
 DELETE FROM  Department;
 INSERT INTO  Department( DepartmentName) 
 VALUES 	
@@ -227,25 +228,34 @@ VALUES
 -- ============================================ADD DATA FROM Question=======================
 TRUNCATE QUESTION;
 DELETE FROM Question;
-INSERT INTO Question(Content, CategoryID, TypeID, CreatorID, CreateDate)
+INSERT INTO Question(Content, CategoryID, TypeID, CreatorID,CreateDate)
 VALUES 
-			('Câu hỏi về Java','1','1','3','2021-07-31'),
-            ('Câu hỏi về .NET','2','2','4','2021-07-31'),
-            ('Câu hỏi về SQL','3','1','3','2021-07-31'),
-            ('Câu hỏi về Postman','4','2','4','2021-07-31'),
-            ('Câu hỏi về toán','5','1','3','2021-07-31'),
-            ('Câu hỏi về lý','6','2','4','2021-07-31'),
-            ('Câu hỏi về hóa','7','1','3','2021-07-31'),
-            ('Câu hỏi về văn','8','2','4','2021-07-31'),
-            ('Câu hỏi về sử','9','1','3','2021-07-31'),
+			('Câu hỏi về Java','1','1','3','2021-07-15'),
+            ('Câu hỏi về .NET','2','2','4','2021-05-12'),
+            ('Câu hỏi về SQL','3','1','3','2021-06-25'),
+            ('Câu hỏi về Postman','4','2','4','2021-04-24'),
+            ('Câu hỏi về toán','5','1','3','2021-01-05'),
+            ('Câu hỏi về lý','6','2','4','2021-07-17'),
+            ('Câu hỏi về hóa','7','1','3','2021-07-13'),
+            ('Câu hỏi về văn','8','2','4','2021-07-26'),
+            ('Câu hỏi về sử','9','1','3','2021-07-28'),
+            ('Câu hỏi về địa','10','2','4','2021-04-30'),
             ('Câu hỏi về địa','10','2','4','2021-07-31'),
             ('Câu hỏi về địa','10','2','4','2021-07-31'),
-            ('Câu hỏi về địa','10','2','4','2021-07-31'),
-            ('Câu hỏi về địa','10','2','4','2021-07-31'),
-            ('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á, nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
-  - Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','7','1','3','2021-07-31'),
-  ('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á, nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
-  - Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','6','2','3','2021-07-31');
+            ('Câu hỏi về địa','10','2','4','2021-07-25'),
+            ('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?
+            Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á, 
+            nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
+			- Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','7','1','3','2021-07-31'),
+			('Nước ta có bao nhiêu tỉnh và thành phố. Miền Bắc, miền Trung và miền Nam có những tỉnh và thành phố nào?
+            Nằm gọn trong vùng nội chí tuyến nửa cầu Bắc từ 8030’B đến 23022’B, đồng thời lại nằm gọn trong vùng hoạt động của gió mùa Đông Nam Á,
+            nước ta có khí hậu nhiệt đới ẩm gió mùa, với đặc điểm nổi bật là nóng ẩm và mưa nhiều theo mùa.
+			- Nhiệt độ trung bình cả năm trong toàn quốc trên 230C, mỗi năm có ít nhất 1200 giờ nắng, cán cân bức xạ quanh năm dương','6','2','3','2021-07-31'),
+			('Câu hỏi về lúa gạo','10','2','4','2021-01-31'),
+			('Câu hỏi về nông nghiệp','10','2','4','2021-03-31'),
+			('Câu hỏi về thủy sản','10','2','4','2021-04-30'),
+			('Câu hỏi về thể tích','10','2','4','2021-05-31');
+  
 -- ===========================================ADD DATA FOR TABLE ANSWER===========================
 TRUNCATE Answer;
 DELETE FROM Answer;
@@ -270,6 +280,7 @@ VALUES
 			('sử3', '4', 'right'),
 			('sử4', '4', 'right');
 -- ===============================================ADD DATA FOR TABLE Exam=============================
+TRUNCATE  Exam;
 DELETE FROM Exam;
 INSERT INTO Exam(Codee, Title, CategoryID, Duration, CreatorID, CreateDate)
 VALUES 
@@ -279,16 +290,20 @@ VALUES
             ('000004',' Đề thi học phần 4','4', '02:00:00' , '4','2020-07-20'),
             ('000005',' Đề thi học phần 5','5', '00:30:00' , '3','2018-07-20'),
             ('000006',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000007',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000008',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000007',' Đề thi học phần 6','1','00:15:00' , '3','2021-07-20'),
+            ('000008',' Đề thi học phần 6','2','00:15:00' , '3','2021-07-20'),
             ('000009',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000010',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000010',' Đề thi học phần 6','3','00:15:00' , '3','2021-07-20'),
             ('000011',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
-            ('000012',' Đề thi học phần 6','6','00:15:00' , '3','2021-07-20'),
+            ('000012',' Đề thi học phần 6','7','00:15:00' , '3','2021-07-20'),
 			('000013',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20'),
-			('000014',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20'),
-			('000015',' Đề thi học phần 5','6','00:15:00' , '3','2021-07-20');
+			('000014',' Đề thi học phần 14','6','00:15:00' , '3','2021-07-20'),
+			('000015',' Đề thi học phần 15','9','00:15:00' , '3','2021-07-20'),
+            ('000016',' Đề thi học phần 16','7','00:15:00' , '3','2005-07-20'),
+            ('000017',' Đề thi học phần 17','8','00:15:00' , '3','2005-07-20'),
+            ('000018',' Đề thi học phần 18','7','00:15:00' , '3','2005-07-20');
 -- ================================================ADD DATA FOR TABLE ExamQuestion==================================
+
 DELETE FROM ExamQuestion;
 INSERT INTO ExamQuestion(ExamID,QuestionID)
 VALUES 
