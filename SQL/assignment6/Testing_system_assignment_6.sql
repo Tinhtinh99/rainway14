@@ -79,22 +79,15 @@ CALL Thong_ke_typequestion(2);
 
 
 -- Question 4: Tạo store để trả ra id của type question có nhiều câu hỏi nhất
-
 DROP PROCEDURE IF EXISTS typequestion_nhieu_ch;
 DELIMITER $$
-	CREATE PROCEDURE typequestion_nhieu_ch(OUT Type_ID INT)
-		BEGIN 
-					  DECLARE countQ INT;
-					  SELECT TypeID,Count(questionID) as `SL`
-                      INTO 	Type_ID, countQ
-                      FROM Question Q 
-                      Group by TypeID
-                      Order by `SL`  DESC LIMIT 1; 
+CREATE PROCEDURE typequestion_nhieu_ch(OUT Type_ID INT)
+		BEGIN		  SELECT 		TypeID INTO Type_ID
+                      FROM 			Question Q 
+                      Group by 		TypeID Order by Count(questionID) DESC LIMIT 1; 
 		END $$;
-DELIMITER ;
-CALL typequestion_nhieu_ch(@TypeOut);
-Select @TypeOut;
-
+DELIMITER ;	
+CALL typequestion_nhieu_ch(@TypeOut);	Select @TypeOut;
 
 -- Question 5: Sử dụng store ở question 4 để tìm ra tên của type question
  SELECT TypeName From Typequestion Where TypeID=@TypeOut;
@@ -179,9 +172,6 @@ DROP PROCEDURE IF EXISTS DEL_Exam_3_nam_truoc;
 DELIMITER $$
 CREATE PROCEDURE  DEL_Exam_3_nam_truoc(OUT Count_ON_Exam INT , OUT Count_ON_Examquestion INT )
 		BEGIN
-                -- khai báo biến đếm 
-				-- DECLARE Count_ON_Exam 			TINYINT UNSIGNED DEFAULT 0;
-				-- DECLARE Count_ON_Examquestion	TINYINT UNSIGNED DEFAULT 0;
                 DECLARE PRINT_Del_info_Exam VARCHAR(50) ;
 
 				-- Tạo bảng tạm chứa exam cần xóa
@@ -206,13 +196,8 @@ CREATE PROCEDURE  DEL_Exam_3_nam_truoc(OUT Count_ON_Exam INT , OUT Count_ON_Exam
                  delete from examquestion  where ExamID IN (SELECT DEL_exam_3_nam.ExamID FROM  DEL_exam_3_nam);
                  
                   -- In câu thông báo số lượng record đã xóa từ các table liên quan trong khi xóa
-				  DROP TABLE IF EXISTS `messenge`;
-                  CReate Table `messenge`(
-                  Notification			VARCHAR(100) NOT NULL );
-				  INSERT INTO `messenge`(Notification)
-				  SELECT CONCAT("Đã xóa", Count_ON_Exam ," Exam trong bảng Exam và ", Count_ON_Examquestion ," Exam trong bảng ExamQuestion");
-				  SELECT * from `messenge`;
-                
+				 SELECT CONCAT("Đã xóa", Count_ON_Exam ," Exam trong bảng Exam và ", Count_ON_Examquestion ," Exam trong bảng ExamQuestion") AS `Thông báo`;
+				 
                 -- Xóa bảng tạm sau khi hoàn thành
 				DROP TABLE IF EXISTS DEL_exam_3_nam;
 		END $$ ;

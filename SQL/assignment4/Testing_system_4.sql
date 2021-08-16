@@ -320,7 +320,18 @@ VALUES
             (11,8),
             (12,9),
             (13,9),
-            (14,9);
+            (14,9),
+            (15,9),
+            (16,9),
+            (17,9),
+            (18,9),
+            (19,9),
+            (20,9),
+            (21,9),
+            (22,9),
+            (23,9),
+            (24,9),
+            (25,9);
 -- ===================================================================================================================================================================================================
 -- ====================================================================================Lệnh JOIN =====================================================================================================
 -- ===================================================================================================================================================================================================
@@ -364,17 +375,18 @@ GROUP BY 		`account`.DepartmentID
 HAVING 			COUNT(`account`.DepartmentID) >=3;
 
 -- Question5 Viết lệnh để lấy ra danh sách câu hỏi được sử dụng trong đề thi nhiều nhất
+SET @SL=(Select count(examquestion.questionID) AS SL
+					from Examquestion
+					group by Examquestion.questionID 
+					order by SL DESC 
+					LIMIT 1);
 SELECT 				examquestion.questionID,
 					COUNT(examquestion.questionID) AS SL,
                     Question.Content
 FROM 				examquestion 
 INNER JOIN 			Question ON Question.questionID=examquestion.questionID
 GROUP BY 			examquestion.questionID
-HAVING SL=			(Select count(examquestion.questionID) AS SL
-					from Examquestion
-					group by Examquestion.questionID 
-					order by SL DESC 
-					LIMIT 1);
+HAVING SL=@SL;		
 
 -- liệt kê danh sách phòng ban có nhiều nhân viên nhất
 SELECT 							`account`.departmentID,
