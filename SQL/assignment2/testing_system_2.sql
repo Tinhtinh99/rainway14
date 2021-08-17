@@ -85,7 +85,7 @@ CREATE TABLE  						Answer(
 DROP TABLE IF EXISTS 				Exam;
 CREATE TABLE  						Exam(
 	ExamID							SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT ,
-    Codee							VARCHAR(15) UNIQUE KEY NOT NULL ,
+    `Code`							VARCHAR(15) UNIQUE KEY NOT NULL ,
     Title							VARCHAR(20) NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
 		CONSTRAINT fk_CateExId FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -275,8 +275,9 @@ VALUES
 			('sử3', '4', 'right'),
 			('sử4', '4', 'right');
 -- ===============================================ADD DATA FOR TABLE Exam=============================
+
 DELETE FROM Exam;
-INSERT INTO Exam(Codee, Title, CategoryID, Duration, CreatorID, CreateDate)
+INSERT INTO Exam(`Code`, Title, CategoryID, Duration, CreatorID, CreateDate)
 VALUES 
 			('000001',' Đề thi học phần 1','1','01:30:00','3','2021-07-20'),
             ('000002',' Đề thi học phần 2','2','00:45:00','4','2018-07-20'),
