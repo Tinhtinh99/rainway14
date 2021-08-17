@@ -1,9 +1,9 @@
 -- ===================================================================================================================================================================================================
 -- ====================================================================================CREATE DATABASE================================================================================================
 -- ===================================================================================================================================================================================================
-DROP DATABASE IF EXISTS 			Exammanagement2;
-CREATE DATABASE  					Exammanagement2;
-USE 								Exammanagement2;
+DROP DATABASE IF EXISTS 			Exammanagement_official;
+CREATE DATABASE  					Exammanagement_official;
+USE 								Exammanagement_official;
 -- -------------------------------------TẠO BẢNG DEPARMENT ----------------------------------------
 DROP TABLE IF EXISTS 				Department;
 CREATE TABLE 						Department(
@@ -24,83 +24,83 @@ CREATE TABLE 						`Account` (
     Username 						CHAR(10) UNIQUE KEY NOT NULL CHECK (LENGTH(Username) >= 6),
     Fullname 						VARCHAR(50) NOT NULL,
     DepartmentID 					SMALLINT UNSIGNED,
-		 -- FOREIGN KEY (DepartmentID)	REFERENCES Department (DepartmentID) ON DELETE CASCADE ON UPDATE CASCADE,
+		  CONSTRAINT fk_DpID FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID) ON DELETE CASCADE ON UPDATE CASCADE,
     PositionID 						SMALLINT UNSIGNED,
-		 -- FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID) ON DELETE CASCADE ON UPDATE CASCADE,
+		  CONSTRAINT fk_PID FOREIGN KEY (PositionID)	REFERENCES `Position` (PositionID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATE NOT NULL
 );
 -- ---------------------------------------TẠO BẢNG GROUP--------------------------------------------
 DROP TABLE IF EXISTS 				`Group`;
 CREATE TABLE  						`Group`(
-	GroupID							MEDIUMINT UNSIGNED PRIMARY KEY auto_increment,
+	GroupID							MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT ,
     GroupName						VARCHAR(50) UNIQUE KEY NOT NULL ,
     CreatorID						MEDIUMINT UNSIGNED ,
-		 -- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
+		  CONSTRAINT fk_CreGr FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATETIME NOT NULL
 );
 -- -----------------------------------------TẠO BẢNG GROUPACCOUNT-------------------------------------
 DROP TABLE IF EXISTS 				GroupAccount;
 CREATE TABLE  						GroupAccount(
 	GroupID							MEDIUMINT UNSIGNED  ,
-		   -- FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE ON UPDATE CASCADE,
+		   CONSTRAINT fk_grID FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID) ON DELETE CASCADE ON UPDATE CASCADE,
     AccountID						MEDIUMINT UNSIGNED,
-		 -- FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
+		 CONSTRAINT fk_Acc FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     JoinDate						DATETIME
 );
 -- -----------------------------------------TẠO BẢNG TYPEQUESTION-------------------------------------
 DROP TABLE IF EXISTS 				TypeQuestion;
 CREATE TABLE  						TypeQuestion(
-	TypeID							SMALLINT UNSIGNED PRIMARY KEY ,
+	TypeID							SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT ,
     TypeName						ENUM('Tự luận ','Trắc nghiệm ')
 );
 -- ------------------------------------------TẠO BẢNG CATEGORYQUESTION------------------------------
 DROP TABLE IF EXISTS 				CategoryQuestion;
 CREATE TABLE  						CategoryQuestion(
-	CategoryID						SMALLINT UNSIGNED PRIMARY KEY ,
+	CategoryID						SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT ,
     CategoryName					VARCHAR(50) UNIQUE KEY NOT NULL 
 );
 -- -------------------------------------------------TẠO BẢNG QUESTION--------------------------------
 DROP TABLE IF EXISTS 				Question;
 CREATE TABLE  						Question(
-	QuestionID						SMALLINT UNSIGNED PRIMARY KEY auto_increment ,
+	QuestionID						SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT  ,
     Content							VARCHAR(500)  NULL,
     CategoryID						SMALLINT UNSIGNED,
-		 -- FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
+		 CONSTRAINT fk_CateId FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
     TypeID							SMALLINT UNSIGNED,
-		-- FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT fk_TpId FOREIGN KEY (TypeID) REFERENCES TypeQuestion(TypeID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreatorID						MEDIUMINT UNSIGNED,
-		 -- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
+		 CONSTRAINT fk_CreaQ FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATE
 );
 -- --------------------------------------------------TẠO BẢNG ANSWER------------------------------------
 DROP TABLE IF EXISTS 				Answer;
 CREATE TABLE  						Answer(
-	AnswerID						SMALLINT UNSIGNED UNIQUE KEY NOT NULL auto_increment ,
+	AnswerID						SMALLINT UNSIGNED UNIQUE KEY NOT NULL AUTO_INCREMENT  ,
     Content							VARCHAR(500) NULL ,
     QuestionID						SMALLINT UNSIGNED,
-		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT fk_QueId FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE,
     isCorrect						ENUM('Right','Wrong') NOT NULL
 );
 -- --------------------------------------------------TẠO BẢNG EXAM------------------------------------
 DROP TABLE IF EXISTS 				Exam;
 CREATE TABLE  						Exam(
 	ExamID							SMALLINT UNSIGNED PRIMARY KEY AUTO_INCREMENT ,
-    Codee							VARCHAR(15) UNIQUE KEY NOT NULL ,
+    `Code`							VARCHAR(15) UNIQUE KEY NOT NULL ,
     Title							VARCHAR(20) NOT NULL,
     CategoryID						SMALLINT UNSIGNED,
-		-- FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT fk_CateExId FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID) ON DELETE CASCADE ON UPDATE CASCADE,
     Duration						TIME NOT NULL,
     CreatorID						MEDIUMINT UNSIGNED,
-		-- FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT fk_CreaEx FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
     CreateDate						DATE
 );
 -- -----------------------------------------------------TẠO BẢNG EXAMQUESTION-------------------------
 DROP TABLE IF EXISTS 				ExamQuestion;
 CREATE TABLE  						ExamQuestion(
 	ExamID							SMALLINT UNSIGNED,
-		-- FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE ON UPDATE CASCADE,
-    QuestionID						SMALLINT UNSIGNED
-		-- FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE
+		CONSTRAINT fk_ExId FOREIGN KEY (ExamID) REFERENCES Exam(ExamID) ON DELETE CASCADE ON UPDATE CASCADE,
+    QuestionID						SMALLINT UNSIGNED,
+		CONSTRAINT fk_QsEx FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- ALTER TABLE examquestion
 -- DROP FOREIGN KEY `examquestion_ibfk_1`;
@@ -111,7 +111,6 @@ CREATE TABLE  						ExamQuestion(
 -- ===================================================================================================================================================================================================
 -- ==================================ADD DATA FOR DEPARTMENT ====================================================================================
 SET SQL_SAFE_UPDATES = 0;
-TRUNcATE Department;
 DELETE FROM  Department;
 INSERT INTO  Department( DepartmentName) 
 VALUES 	
@@ -126,7 +125,6 @@ VALUES
             ('Phòng ăn'				),
             ('Vệ sinh'				),
             ('Sale');
-            INSERT INTO `exammanagement2`.`department` (`DepartmentID`, `DepartmentName`) VALUES ('12', 'CUTE');
 
 -- ======================================ADD DATA FOR Posiition======================================================================================
 
@@ -147,7 +145,6 @@ VALUES
             ('nhân viên sale');
             
 -- ============================================ADD DATA FOR Accountt====================================================
-TRUNCATE `Account`;
 DELETE FROM `Account` ;
 INSERT INTO `Account`(Email, Username, Fullname, DepartmentID, PositionID, CreateDate)
 VALUES 			
@@ -170,17 +167,17 @@ VALUES
              ('ngoc12323@gmail.com','ngoc9277','Hoàng Đức Ngọc','11','12','2018-07-09'		);
 -- ====================================ADD DATA FOR TABLE GROUP============================================================
 DELETE FROM `Group`;
-INSERT INTO `Group`(GroupID, GroupName, CreatorID, CreateDate)
+INSERT INTO `Group`(GroupName, CreatorID, CreateDate)
 VALUES 
-			(1,'Nhóm giám hiệu', 1, '2018-07-07'	),
-            (2,'Nhóm Giáo Dục' ,1,'2018-07-09'		),
-            (3,'Nhóm thư ký',1,'2018-07-10'			),
-            (4,'Nhóm HSSV',1,'2019-01-01'			),
-            (5,'Nhóm bảo vệ','1','2019-01-01'		),
-            (6,'Nhóm thanh tra','1','2019-01-01'	),
-            (7,'grouptest','1','2019-01-01'			),
-            (8,'grouptest1','1','2019-01-01'		),
-            (9,'grouptest2','1','2019-01-01'		);
+			('Nhóm giám hiệu', 1, '2018-07-07'	),
+            ('Nhóm Giáo Dục' ,1,'2018-07-09'		),
+            ('Nhóm thư ký',1,'2018-07-10'			),
+            ('Nhóm HSSV',1,'2019-01-01'			),
+            ('Nhóm bảo vệ','1','2019-01-01'		),
+            ('Nhóm thanh tra','1','2019-01-01'	),
+            ('grouptest','1','2019-01-01'			),
+            ('grouptest1','1','2019-01-01'		),
+            ('grouptest2','1','2019-01-01'		);
 -- ========================================ADD DATA FOR TABLE GroupAccount==============================================
 DELETE FROM GroupAccount;
 INSERT INTO GroupAccount(groupID,AccountID, JoinDate)
@@ -205,28 +202,27 @@ VALUES
             (6,'2','2021-08-04');
 -- =================================================ADD DATA FOR TABLE TYPEQUESTION================================================
 DELETE FROM TypeQuestion;
-INSERT INTO TypeQuestion (TypeID, TypeName)
+INSERT INTO TypeQuestion (TypeName)
 VALUES  
-			(1,'Tự luận'	),
-            (2,'Trắc nghiệm');
+			('Tự luận'	),
+            ('Trắc nghiệm');
 -- =================================================Category Question========================================================
 DELETE FROM CategoryQuestion;
-INSERT INTO CategoryQuestion(CategoryID, CategoryName)
+INSERT INTO CategoryQuestion(CategoryName)
 VALUES 		
-			(1, 'Java'		),
-            (2, ' .NET'		),
-            (3, 'SQL'		),
-            (4, 'Postman'	),
-            (5,'toán'		),
-            (6,'lý'			),
-            (7,'hóa'		),
-            (8,'văn'		),
-            (9,'sử'			),
-            (10,'địa'		),
-			('11', 'Sinh học'),
-			('12', 'Văn hóa');
+			('Java'		),
+            (' .NET'		),
+            ('SQL'		),
+            ('Postman'	),
+            ('toán'		),
+            ('lý'			),
+            ('hóa'		),
+            ('văn'		),
+            ('sử'			),
+            ('địa'		),
+			('Sinh học'),
+			('Văn hóa');
 -- ============================================ADD DATA FROM Question=======================
-TRUNCATE QUESTION;
 DELETE FROM Question;
 INSERT INTO Question(Content, CategoryID, TypeID, CreatorID,CreateDate)
 VALUES 
@@ -257,7 +253,6 @@ VALUES
 			('Câu hỏi về thể tích','10','2','4','2021-05-31');
   
 -- ===========================================ADD DATA FOR TABLE ANSWER===========================
-TRUNCATE Answer;
 DELETE FROM Answer;
 INSERT INTO Answer(Content, QuestionID, isCorrect)
 VALUES 
@@ -280,9 +275,9 @@ VALUES
 			('sử3', '4', 'right'),
 			('sử4', '4', 'right');
 -- ===============================================ADD DATA FOR TABLE Exam=============================
-TRUNCATE  Exam;
+
 DELETE FROM Exam;
-INSERT INTO Exam(Codee, Title, CategoryID, Duration, CreatorID, CreateDate)
+INSERT INTO Exam(`Code`, Title, CategoryID, Duration, CreatorID, CreateDate)
 VALUES 
 			('000001',' Đề thi học phần 1','1','01:30:00','3','2021-07-20'),
             ('000002',' Đề thi học phần 2','2','00:45:00','4','2018-07-20'),
@@ -324,158 +319,98 @@ VALUES
             (15,9),
             (16,9),
             (17,9),
-            (18,9),
-            (19,9),
-            (20,9),
-            (21,9),
-            (22,9),
-            (23,9),
-            (24,9),
-            (25,9);
+            (18,9);
+    
 -- ===================================================================================================================================================================================================
 -- ====================================================================================Lệnh JOIN =====================================================================================================
 -- ===================================================================================================================================================================================================
 -- Question 1: Viết lệnh để lấy ra danh sách nhân viên và thông tin phòng ban của họ
-SELECT 			AccountID,
-				Fullname,
-				department.DepartmentName,
-				Department.DepartmentID
-FROM 			`Account`
-INNER JOIN 		Department
-ON 				Department.DepartmentID = `Account`.DepartmentID
-ORDER BY		AccountID ASC  ;
+SELECT 			A.AccountID,
+				A.Fullname,
+				D.DepartmentName,
+				D.DepartmentID
+FROM 			`Account` A
+LEFT JOIN 		Department D USING(DepartmentID);
+
 
 -- Question 2: Viết lệnh để lấy ra thông tin các account được tạo sau ngày 20/12/2010
-SELECT  		`Account`.*,
-				Department.DepartmentName,
-				`Position`.PositionName,
-                Joindate AS 'Ngày vào nhóm' ,
-                GroupAccount.GroupID, 
-                `Account`.CreateDate AS 'Ngày Tạo Account'
+SELECT  *
 FROM  			`Account`
-INNER JOIN 		Department 		ON		Department.DepartmentId=`Account`.DepartmentId
-INNER JOIN 		`Position`		ON		`Position`.PositionID=`Account`.PositionID
-INNER JOIN 		GroupAccount	ON		GroupAccount.AccountID=`Account`.AccountID
 WHERE 			`Account`.CreateDate > '2010-12-20';
 
 -- Question 3: Viết lệnh để lấy ra tất cả các student 
 SELECT			`Account`.*,
 				`Position`.PositionName
 FROM			`Account`
-INNER JOIN 		`Position` ON `Position`.PositionID=`Account`.PositionID
+INNER JOIN 		`Position` USING(PositionID)
 WHERE 			`Position`.positionName = 'Student';
 
 -- Question 4: Viết lệnh để lấy ra danh sách các phòng ban có >3 nhân viên
-SELECT 			Department.DepartmentName,
-				count(`account`.DepartmentID) AS Số_lượng_nhân_viên 
-FROM 			`account` 
-INNER JOIN 		department 
-ON 				`Account`.DepartmentID = Department.DepartmentID
-GROUP BY 		`account`.DepartmentID
-HAVING 			COUNT(`account`.DepartmentID) >=3;
+SELECT 			D.DepartmentName,
+				count(A.DepartmentID) AS Số_lượng_nhân_viên 
+FROM 			`account` A 
+RIGHT JOIN 		department D  USING(DepartmentID)
+GROUP BY 		D.DepartmentID
+HAVING 			COUNT(A.DepartmentID) >3;
 
 -- Question5 Viết lệnh để lấy ra danh sách câu hỏi được sử dụng trong đề thi nhiều nhất
-SET @SL=(Select count(examquestion.questionID) AS SL
-					from Examquestion
-					group by Examquestion.questionID 
-					order by SL DESC 
-					LIMIT 1);
-SELECT 				examquestion.questionID,
-					COUNT(examquestion.questionID) AS SL,
-                    Question.Content
-FROM 				examquestion 
-INNER JOIN 			Question ON Question.questionID=examquestion.questionID
-GROUP BY 			examquestion.questionID
-HAVING SL=@SL;		
+SELECT 				Q.questionID,
+					Q.Content,
+                    COUNT(EQ.ExamID) AS `SL_đề_thi_sử_dụng_câu_hỏi`
+FROM 				examquestion EQ
+RIGHT JOIN 			Question Q USING(QuestionID)
+GROUP BY 			Q.questionID
+HAVING 				`SL_đề_thi_sử_dụng_câu_hỏi`= (SELECT				COUNT(EQ.ExamID) AS `SL_đề_thi_sử_dụng_câu_hỏi`
+													FROM 				examquestion EQ
+													GROUP BY 			EQ.questionID ORDER BY `SL_đề_thi_sử_dụng_câu_hỏi` DESC  LIMIT 1 );
 
 -- liệt kê danh sách phòng ban có nhiều nhân viên nhất
-SELECT 							`account`.departmentID,
-								department.departmentName,
-								Count(`account`.departmentID) AS SL_nhân_viên 
-FROM 							`account`
-INNER JOIN 						Department ON Department.DepartmentID=`Account`.DepartmentID 
-GROUP BY 						`account`.departmentID
-HAVING SL_nhân_viên = 			(SELECT Count(`account`.departmentID) AS SL_nhân_viên
-								FROM 	`account`
-								GROUP BY  `account`.departmentID
-								ORDER BY  SL_nhân_viên DESC
-								LIMIT 1);
+SELECT 							D.DepartmentID,
+								D.departmentName,
+								Count(A.AccountID) AS SL_nhân_viên 
+FROM 							Department D 
+LEFt JOIN 						`Account` A  USING(DepartmentID)
+GROUP BY 						D.DepartmentID
+HAVING SL_nhân_viên = 			(SELECT Count(A.accountID) AS SL_nhân_viên
+								FROM 	`account` A 
+								GROUP BY  A.departmentID ORDER BY  SL_nhân_viên DESC LIMIT 1);
                                 
                                 
 --  Question 6: Thông kê mỗi category Question được sử dụng trong bao nhiêu Question
-
--- cách 1 dùng right join 
 SELECT CQ.categoryID, CQ.categoryName,count(Q.categoryID) AS `Sl`
-from question Q RIGHT JOIN categoryQuestion CQ ON CQ.categoryID=Q.categoryID
-Group BY ( CQ.categoryID);
+from CategoryQuestion CQ  LEFT JOIN Question Q USING(CategoryID)
+Group BY (CQ.categoryID);
 
 
--- cách 2 dùng left join 
-SELECT CQ.categoryID, CQ.categoryName,count(Q.categoryID) AS `Sl`
-from  categoryQuestion CQ LEFT JOIN question Q ON CQ.categoryID=Q.categoryID
-Group BY ( CQ.categoryID);
-
-
--- cách 3 dùng inner join + union 
-SELECT CQ.categoryname, count(Q.content) AS `SL`
-FROM question Q 
-INNER JOIN categoryquestion CQ 
-ON CQ.categoryID=Q.categoryID 
-Group by CQ.categoryname
-UNION 
-SELECT CQ.categoryName, 0 
-From categoryquestion CQ 
-left join question Q 
-ON CQ.categoryID=Q.categoryID 
-where Q.content is null ;
-  
 -- Question 7: Thông kê mỗi Question được sử dụng trong bao nhiêu Exam
 SELECT 		Q.questionID,
 			count(EX.ExamID) AS `Sl`
-from  		question Q left JOIN examquestion EX ON Q.questionID=EX.questionID
+from  		question Q 
+LEFT JOIN 	examquestion EX USING(QuestionID)
 Group BY 	(Q.questionID);
  
 -- Question 8: Lấy ra Question có nhiều câu trả lời nhất
--- CÁCH 1 : DÙNG SELECT ĐÔi
-SELECT 			A.QuestionID,
-				Q.content,
-				count(A.AnswerID) AS `SL_Answer`
-From 			Answer A 
-INNER JOIN 		Question Q 
-ON 				A.questionID=Q.questionID
-Group by  		A.QuestionID
-HAVING `SL_Answer`= 
-(select count(A.AnswerID) AS `SL_Answer`
-From Answer A 
-Group by  A.QuestionID
-ORDER BY `SL_Answer` DESC LIMIT 1);
--- select max(`T`.`SL_Answer`) From (select count(A.AnswerID) AS `SL_Answer` FROM Answer A Group BY A.questionID) AS `T`
 
--- cách 2 : select đôi + hàm MAX 
-
-
-SELECT 			A.QuestionID,
+SELECT 			Q.QuestionID,
 				Q.content,
 				count(A.AnswerID) AS `SL`
 From 			Answer A 
-INNER JOIN 		Question Q 
-ON 				A.questionID=Q.questionID
-Group by  		A.QuestionID
-HAVING `SL`= (Select MAX(T.`SL`) from (SELECT QuestionID, count(AnswerID) AS `SL` From Answer Group by QuestionID) AS `T`);
+RIGHT JOIN 		Question Q USING(questionID)
+Group by  		Q.QuestionID
+HAVING `SL`= (Select MAX(T.`SL`) from (SELECT count(AnswerID) AS `SL` From Answer Group by QuestionID) AS `T`);
 
 -- Question 9: Thống kê số lượng account trong mỗi group 
 select		G.GroupID,
 			count(GA.accountID) as `SL`
-from 		`Group`G 
-Left join 	Groupaccount GA On G.GroupID=GA.GroupID
+from 		`Group` G 
+Left join 	Groupaccount GA USING(GroupID)
 group by 	G.GroupID;
 
 -- Question 10: Tìm chức vụ có ít người nhất
 SELECT  		p.positionID, p.positionName,
 				count(A.accountID) AS `SL` 
 FROM 			`Position` P
-LEFT JOIN 		`Account` A 
-ON 				p.positionID=A.positionID
+LEFT JOIN 		`Account` A  USING(positionID)
 GROUP BY  		p.positionID
 HAVING `SL` =  (SELECT  count(A.accountID) AS `SL` FROM `Position` P LEFT JOIN `Account` A ON p.positionID=A.positionID
 				GROUP BY  p.positionID
@@ -484,11 +419,10 @@ HAVING `SL` =  (SELECT  count(A.accountID) AS `SL` FROM `Position` P LEFT JOIN `
  
 
 --  Question 11: Thống kê mỗi phòng ban có bao nhiêu GIÁM ĐỐc , Phó giám đốc, mentor , student ......
-SELECT A.departmentID, D.DepartmentName, A.PositionID, P.PositionName, Count(*) AS `SL_NV`
+SELECT P.PositionName,count(A.AccountID) AS `SL`
 FROM `Account` A 
-JOIN `Department` D USING(DepartmentID) 
-JOIN `Position` P USING(PositionID)
-GROUP BY A.DepartmentID, A.PositionID;
+RIGHT JOIN `Position` P USING(PositionID)
+GROUP BY P.PositionID;
 
 -- Question 12: Lấy thông tin chi tiết của câu hỏi bao gồm: thông tin cơ bản của question, loại câu hỏi, ai là người tạo ra câu hỏi, câu trả lời là gì, … 
 SELECT				question.questionID,
@@ -501,20 +435,20 @@ INNER JOIN 			`account` on `account`.accountID= question.creatorID
 INNER JOIN			answer on question.questionID= answer.questionID ;
 
 -- Question 13: Lấy ra số lượng câu hỏi của mỗi loại tự luận hay trắc nghiệm
-SELECT   			typequestion.typename AS Loại_câu_hỏi,
-					count(question.typeID) AS Số_lượng
-FROM 				question 
-INNER JOIN 			typequestion ON typequestion.typeID= question.typeID 
-GROUP BY 			typequestion.typename; 
+SELECT   			TQ.typename AS Loại_câu_hỏi,
+					count(Q.QuestionID) AS Số_lượng
+FROM 				question Q
+RIGHT JOIN 			typequestion TQ USING(TypeID)
+GROUP BY 			TQ.typename; 
 
 -- Question 14: Lấy ra group không có account nào 
 -- Question 15: Lấy ra group không có account nào 
 select		G.GroupID,
 			count(GA.accountID) as `SL`
-from 		`Group`G 
-Left join 	Groupaccount GA On G.GroupID=GA.GroupID
+from 		`Group` G 
+Left join 	Groupaccount GA USING(GroupID)
 group by 	G.GroupID
-HAVING `SL`=0;
+HAVING 	`SL`=0;
 
 
 -- Question 16: Lấy ra question không có answer nào
