@@ -1,4 +1,4 @@
-USE 		Exammanagement2;
+USE 		Exammanagement_official;
 
 -- Question 1: Tạo view có chứa danh sách nhân viên thuộc phòng ban sale
 CREATE OR REPLACE VIEW 	`DS_NV` AS 
@@ -36,38 +36,24 @@ SELECT * from 			`Câu_hỏi_quá_dài`;
 DROP VIEW  				`Câu_hỏi_quá_dài`;
 
 -- Question 4: Tạo view có chứa danh sách các phòng ban có nhiều nhân viên nhất
--- Cách 1 dùng hàm max (ưu tiên)
-CREATE OR REPLACE VIEW 	`PB` AS 
-SELECT					D.*, 
-						count(A.accountID) AS `Số nhân viên`
-FROM					`Department` D 
-LEFT JOIN 				`Account` A USING(DepartmentID)
-Group by				D.DepartmentID
-HAVING 					`Số nhân viên`= (Select max(`y`.`Số nhân viên`) from (SELECT count(A.accountID) AS `Số nhân viên` FROM `account` A
-																				Group by	A.DepartmentID) AS `Y`);
-SELECT * FROM 			`PB`;
--- cách 2, dùng order by limit 
-CREATE OR REPLACE VIEW `PBc2` AS
-SELECT					D.*, 
-						count(A.accountID) AS `Số nhân viên`
-FROM					`Department` D 
-LEFT JOIN 				`Account` A 		USING(DepartmentID)
-Group by				D.DepartmentID
-HAVING 					`Số nhân viên`=(SELECT count(A.accountID) AS `Số nhân viên`
-										FROM  `account` A
-										Group by A.DepartmentID
-										ORDER BY `Số nhân viên` DESC LIMIT 1);
-SELECT * FROM 			`PBc2`;
+CREATE OR REPLACE VIEW `Pban_nhieu_nv_nhat`AS 
+SELECT D.DepartmentID,D.DepartmentName, COUNT(A.AccountID) AS `SL_NV_OF_PB` 
+FROM `Account` A
+RIGHT JOIN `Department` D USING(DepartmentID)
+GROUP BY D.DepartmentID
+HAVING `SL_NV_OF_PB` = (SELECT COUNT(AccountID) FROM `Account` GROUP BY DepartmentID ORDER BY COUNT(AccountID) DESC LIMIT 1 ); 
+SELECT * FROM `Pban_nhieu_nv_nhat`;
 
 
 -- Question 5: Tạo view có chứa tất các các câu hỏi do user họ Nguyễn tạo 
-CREATE OR REPLACE VIEW `Q_OF_NGUYEN` AS 
-SELECT 					Q.*, A.FULLname AS `người tạo`
+CREATE OR REPLACE VIEW `c/h_do_user_ho_nguyen_tao` AS 
+SELECT 					Q.*, 
+						A.FULLname AS `người tạo`
 FROM 					`Question` Q
 JOIN 					`account` A on Q.creatorID = A.accountID 
 WHERE 					A.FULLname LIKE 'Nguyễn%';
 
-SELECT * FROM 			`Q_OF_NGUYEN`
+SELECT * FROM 			`c/h_do_user_ho_nguyen_tao`;
 
 
 
